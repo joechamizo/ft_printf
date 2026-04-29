@@ -6,15 +6,14 @@
 /*   By: joaqumar <joaqumar@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/25 14:39:00 by joaqumar          #+#    #+#             */
-/*   Updated: 2026/04/25 14:47:27 by joaqumar         ###   ########.fr       */
+/*   Updated: 2026/04/29 10:37:46 by joaqumar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
- #include "ft_printf.h"
- 
- int main(void)
- {
-     ft_printf("Hola %s, el número es %+5.5d\n", "Mundo", 42);
-     return (0);
-}
+#include "ft_printf.h"
 
+int	main(void)
+{
+	ft_printf("Hola %s, el número es %+5.5d\n", "Mundo", 42);
+	return (0);
+}

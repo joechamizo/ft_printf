@@ -6,13 +6,12 @@
 /*   By: joaqumar <joaqumar@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/25 14:26:06 by joaqumar          #+#    #+#             */
-/*   Updated: 2026/04/25 14:27:13 by joaqumar         ###   ########.fr       */
+/*   Updated: 2026/05/01 21:24:22 by joaqumar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-// 1. Determina el prefijo (+, -, espacio) y maneja el número negativo
 static char	*get_int_prefix(t_printf *p, long *n)
 {
 	if (*n < 0)
@@ -27,7 +26,6 @@ static char	*get_int_prefix(t_printf *p, long *n)
 	return ("");
 }
 
-// 2. Imprime el bloque: Prefijo + Ceros de precisión + Número
 static void	print_int_box(t_printf *p, long n, char *pref, int zeros)
 {
 	int	n_len;
@@ -35,10 +33,9 @@ static void	print_int_box(t_printf *p, long n, char *pref, int zeros)
 	n_len = ft_get_num_len(n, 10);
 	if (n == 0 && p->dot && p->prec == 0)
 		n_len = 0;
-	// Si hay flag '0' y NO hay precisión, el padding de ceros va después del signo
 	if (p->zero && (!p->dot || p->prec < 0))
 	{
-		ft_putstr_buffer(p, pref, 3); // 3 es un límite seguro para el prefijo
+		ft_putstr_buffer(p, pref, 3);
 		ft_print_padding(p, p->width - (ft_strlen(pref) + zeros + n_len), '0');
 	}
 	else
@@ -50,7 +47,6 @@ static void	print_int_box(t_printf *p, long n, char *pref, int zeros)
 		ft_putnbr_base_buffer(p, n, "0123456789");
 }
 
-// 3. Handler para %d e %i
 void	handle_int(t_printf *p)
 {
 	long	n;
@@ -68,16 +64,13 @@ void	handle_int(t_printf *p)
 	if (p->prec > n_len)
 		zeros = p->prec - n_len;
 	width_pad = p->width - (ft_strlen(pref) + zeros + n_len);
-	// Padding inicial (espacios)
 	if (!p->dash && (!p->zero || (p->dot && p->prec >= 0)))
 		ft_print_padding(p, width_pad, ' ');
 	print_int_box(p, n, pref, zeros);
-	// Padding final (si hay flag '-')
 	if (p->dash)
 		ft_print_padding(p, width_pad, ' ');
 }
 
-// 4. Handler para %u (unsigned int)
 void	handle_unsigned(t_printf *p)
 {
 	unsigned int	n;

@@ -6,12 +6,11 @@
 /*   By: joaqumar <joaqumar@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/25 14:27:31 by joaqumar          #+#    #+#             */
-/*   Updated: 2026/04/25 14:29:39 by joaqumar         ###   ########.fr       */
+/*   Updated: 2026/05/01 21:59:58 by joaqumar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "ft_printf.h"
 
-// 1. Imprime el prefijo para hex (0x/0X) o punteros
 static void	print_hex_prefix(t_printf *p, unsigned long n)
 {
 	if (p->type == 'p')
@@ -25,7 +24,6 @@ static void	print_hex_prefix(t_printf *p, unsigned long n)
 	}
 }
 
-// 2. Auxiliar para imprimir el número hex con la base correcta
 static void	print_hex_number(t_printf *p, unsigned int n)
 {
 	if (p->type == 'x')
@@ -34,62 +32,65 @@ static void	print_hex_number(t_printf *p, unsigned int n)
 		ft_putnbr_base_buffer(p, n, "0123456789ABCDEF");
 }
 
-// 3. Handler para %x y %X (Hexadecimales)
 void	handle_hex(t_printf *p)
 {
 	unsigned int	n;
-	int				n_len;
-	int				zeros;
-	int				w_pad;
-	int				pref_len;
+	int				len;
+	int				z;
+	int				w;
 
 	n = va_arg(p->args, unsigned int);
-	n_len = ft_get_num_len(n, 16);
+	len = ft_get_num_len(n, 16);
 	if (n == 0 && p->dot && p->prec == 0)
-		n_len = 0;
-	zeros = 0;
-	if (p->prec > n_len)
-		zeros = p->prec - n_len;
-	pref_len = 0;
+		len = 0;
+	z = 0;
+	if (p->prec > len)
+		z = p->prec - len;
+	w = p->width - (z + len);
 	if (p->hash && n != 0)
-		pref_len = 2;
-	w_pad = p->width - (pref_len + zeros + n_len);
+		w -= 2;
 	if (!p->dash && (!p->zero || (p->dot && p->prec >= 0)))
-		ft_print_padding(p, w_pad, ' ');
+		ft_print_padding(p, w, ' ');
 	print_hex_prefix(p, n);
 	if (!p->dash && p->zero && (!p->dot || p->prec < 0))
-		ft_print_padding(p, w_pad, '0');
-	ft_print_padding(p, zeros, '0');
-	if (n_len > 0)
+		ft_print_padding(p, w, '0');
+	ft_print_padding(p, z, '0');
+	if (len > 0)
 		print_hex_number(p, n);
 	if (p->dash)
-		ft_print_padding(p, w_pad, ' ');
+		ft_print_padding(p, w, ' ');
 }
 
-// 4. Handler para %p (Punteros)
 void	handle_pointer(t_printf *p)
 {
 	unsigned long	ptr;
-	int				n_len;
-	int				w_pad;
+	int				len;
+	int				w;
 
-	ptr = va_arg(p->args, unsigned long);
-	n_len = ft_get_num_len(ptr, 16);
-	w_pad = p->width - (2 + n_len);
+	ptr = (unsigned long)va_arg(p->args, void *);
+	if (!ptr)
+		len = 5;
+	else
+		len = ft_get_num_len(ptr, 16) + 2;
+	w = p->width - len;
 	if (!p->dash)
-		ft_print_padding(p, w_pad, ' ');
-	print_hex_prefix(p, ptr);
-	ft_putnbr_base_buffer(p, ptr, "0123456789abcdef");
+		ft_print_padding(p, w, ' ');
+	if (!ptr)
+		ft_putstr_buffer(p, "(nil)", 5);
+	else
+	{
+		ft_putstr_buffer(p, "0x", 2);
+		ft_putnbr_base_buffer(p, ptr, "0123456789abcdef");
+	}
 	if (p->dash)
-		ft_print_padding(p, w_pad, ' ');
+		ft_print_padding(p, w, ' ');
 }
 
-// 5. Handler para %s (Strings)
 void	handle_string(t_printf *p)
 {
 	char	*s;
 	int		len;
-	int		w_pad;
+	int		w;
 
 	s = va_arg(p->args, char *);
 	if (!s)
@@ -97,10 +98,10 @@ void	handle_string(t_printf *p)
 	len = ft_strlen(s);
 	if (p->dot && p->prec < len)
 		len = p->prec;
-	w_pad = p->width - len;
+	w = p->width - len;
 	if (!p->dash)
-		ft_print_padding(p, w_pad, ' ');
+		ft_print_padding(p, w, ' ');
 	ft_putstr_buffer(p, s, len);
 	if (p->dash)
-		ft_print_padding(p, w_pad, ' ');
+		ft_print_padding(p, w, ' ');
 }

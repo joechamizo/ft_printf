@@ -6,22 +6,19 @@
 #    By: joaqumar <joaqumar@student.42barcelona.co  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/04/25 14:30:53 by joaqumar          #+#    #+#              #
-#    Updated: 2026/04/25 14:43:46 by joaqumar         ###   ########.fr        #
+#    Updated: 2026/05/01 22:05:02 by joaqumar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= libftprintf.a
 
-# Compilador y Flags
-CC			= gcc
+CC			= cc
 CFLAGS		= -Wall -Werror -Wextra
 RM			= rm -f
 AR			= ar rcs
 
-# Archivos de cabecera
 HEADER		= ft_printf.h
 
-# Listado de archivos fuente
 SRC			= ft_printf.c \
 			  ft_parser.c \
 			  ft_dispatch.c \
@@ -29,39 +26,33 @@ SRC			= ft_printf.c \
 			  ft_print_nums.c \
 			  ft_print_hex.c
 
-# Transformación de .c a .o
 OBJ			= $(SRC:.c=.o)
 
-# Regla principal
 all: $(NAME)
 
-# Creación de la librería
+bonus : all
+
 $(NAME): $(OBJ)
 	$(AR) $(NAME) $(OBJ)
 	@echo 
 	@echo "✅ Librería $(NAME) creada con éxito."
 	@echo
 
-# Compilación de objetos individuales
-%.o: %.c $(HEADER)
+%.o: %.c $(HEADER) Makefile
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Limpiar archivos objeto
 clean:
 	$(RM) $(OBJ)
 	@echo
 	@echo "🧹 Archivos objeto eliminados."
 	@echo
 
-# Limpiar objetos y la librería
 fclean: clean
 	$(RM) $(NAME)
 	@echo
 	@echo "🗑️ Librería $(NAME) eliminada."
 	@echo
 
-# Re-compilar todo
 re: fclean all
 
-# Indicar que estas reglas no son archivos
-.PHONY: all clean fclean re
+.PHONY: all bonus clean fclean re

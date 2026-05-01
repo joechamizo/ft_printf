@@ -6,9 +6,10 @@
 /*   By: joaqumar <joaqumar@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/25 14:27:31 by joaqumar          #+#    #+#             */
-/*   Updated: 2026/05/01 21:59:58 by joaqumar         ###   ########.fr       */
+/*   Updated: 2026/05/01 22:13:48 by joaqumar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "ft_printf.h"
 
 static void	print_hex_prefix(t_printf *p, unsigned long n)
@@ -68,11 +69,12 @@ void	handle_pointer(t_printf *p)
 	int				w;
 
 	ptr = (unsigned long)va_arg(p->args, void *);
+	len = ft_get_num_len(ptr, 16);
 	if (!ptr)
 		len = 5;
-	else
-		len = ft_get_num_len(ptr, 16) + 2;
 	w = p->width - len;
+	if (ptr)
+		w -= 2;
 	if (!p->dash)
 		ft_print_padding(p, w, ' ');
 	if (!ptr)

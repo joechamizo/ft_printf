@@ -1,4 +1,4 @@
-*Este proyecto ha sido creado como parte del currículo de 42 por <tu_login>.*
+*Este proyecto ha sido creado como parte del currículo de 42 por joaqumar.*
 
 # 🖨️ ft_printf
 

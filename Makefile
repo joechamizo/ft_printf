@@ -6,7 +6,7 @@
 #    By: joaqumar <joaqumar@student.42barcelona.co  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/04/25 14:30:53 by joaqumar          #+#    #+#              #
-#    Updated: 2026/05/01 22:05:02 by joaqumar         ###   ########.fr        #
+#    Updated: 2026/05/06 19:55:49 by joaqumar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,7 +40,9 @@ $(NAME): $(OBJ)
 
 %.o: %.c $(HEADER) Makefile
 	$(CC) $(CFLAGS) -c $< -o $@
-
+test: all
+	$(CC) $(CFLAGS) main.c libftprintf.a -o test
+	./test
 clean:
 	$(RM) $(OBJ)
 	@echo

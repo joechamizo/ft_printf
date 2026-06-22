@@ -1,72 +1,123 @@
-*Este proyecto ha sido creado como parte del currículo de 42 por joaqumar.*
+# ft_printf
 
-# 🖨️ ft_printf
+## 👤 Project Overview and AI Collaboration
 
-## 📝 Descripción
-El proyecto **ft_printf** consiste en recrear la famosa función `printf` de la librería estándar de C (`libc`). El objetivo principal es aprender a manejar **funciones variádicas** (usando la librería `stdarg.h`) y profundizar en la gestión eficiente de flujos de datos mediante el uso de un **buffer de salida**. 
+To keep the project understandable, maintainable, and aligned with the 42 evaluation process, the development was structured around efficient handling of variable arguments, a unified state control mechanism, and an optimized data flushing stream.
 
-Esta implementación imita el comportamiento original de `printf`, devolviendo el número total de caracteres impresos y gestionando diversos tipos de conversiones y flags de formato bajo las estrictas restricciones de la **Norma de 42**.
+- **Unified state architecture:** Designed and implemented a control mechanism based on a single structure (`t_printf`) to encapsulate the buffer and flag states, removing the need for global variables.
+- **Output optimization:** Implemented a buffering mechanism to mitigate the performance cost of system calls, accumulating characters in RAM before performing write operations.
+- **Advanced modularity:** Structured the execution flow into atomic, dedicated modules to strictly comply with the 42 Norm restriction of a maximum of 5 functions per file.
 
-## 📂 Estructura del Proyecto
+---
 
-Para cumplir con la restricción de un máximo de 5 funciones por archivo, el código se organiza de la siguiente manera:
+## 📝 Description
 
+The **ft_printf** project consists of recreating the famous `printf` function from the standard C library (`libc`). The primary objective is to learn how to handle variadic functions and to delve deep into the efficient management of data streams through the use of an output buffer.
 
-| Archivo | Responsabilidad |
-| :--- | :--- |
-| 🚀 `ft_printf.c` | Punto de entrada, gestión del ciclo de vida del buffer y bucle de formato. |
-| 🔍 `ft_parser.c` | Análisis y captura de flags (`-0.# +`), ancho de campo y precisión. |
-| 🛤️ `ft_dispatch.c` | Distribuidor de conversiones (Dispatcher) para cada especificador. |
-| 🔢 `ft_print_nums.c` | Lógica de impresión para enteros (`%d`, `%i`, `%u`) con gestión de signos. |
-| ⬢ `ft_print_hex.c` | Lógica para hexadecimales (`%x`, `%X`) y punteros (`%p`). |
-| 🛠️ `ft_utils.c` | Herramientas base: cálculo de longitudes y gestión de bases numéricas. |
+This implementation faithfully mimics the original behavior of `printf`, returning the total number of printed characters and handling various types of formatting conversions and flags under the strict constraints of the 42 Norm.
 
-## ⚙️ Instrucciones
+---
 
-### Compilación
-El proyecto se compila mediante un `Makefile` que incluye las reglas `all`, `clean`, `fclean` y `re`. Para generar la librería:
+## 📂 Project Structure
+
+To comply with the restriction of a maximum of 5 functions per file, the source code is meticulously organized as follows:
+
+- **🚀 ft_printf.c:** Main entry point, buffer lifecycle management, and main format parsing loop.
+- **🔍 ft_parser.c:** Syntactic analysis and flag capture (`-`, `0`, `.`, `#`, ` `, `+`), field width computation, and precision handling.
+- **🛤️ ft_dispatch.c:** Conversion dispatcher responsible for routing execution control to the correct module based on the specifier.
+- **🔢 ft_print_nums.c:** Processing and printing logic for integers (`%d`, `%i`, `%u`) with rigorous sign management.
+- **⬢ ft_print_hex.c:** Conversion logic for hexadecimal formats (`%x`, `%X`) and memory addresses/pointers (`%p`).
+- **🛠️ ft_utils.c:** Core base utilities, numerical length calculation, and arithmetic base management.
+
+---
+
+## 📐 Technical Decisions: Algorithm and Data Structure
+
+The project is designed under a modular paradigm where the control structure directs data through memory buffers before interacting with the operating system kernel.
+
+### 💾 Unified Data Structure: `t_printf`
+
+A unified data structure was designed to act as the "global state" of the function. It contains the character buffer, the current index, the total printed byte counter, and all boolean and numerical flag variables.
+
+- **Justification:** It allows total and secure access to information via a single pointer passed by reference. This completely eliminates the use of forbidden global variables and facilitates clean modular communication across the different files of the project.
+
+### ⚡ Output Algorithm: Active Buffer Management
+
+Instead of printing every single character individually using repeated primitive system calls, the system utilizes a static 4096-byte buffer in memory.
+
+- **Justification:** System calls (`write`) are computationally expensive operations due to the context switch overhead between user space and kernel space. Minimizing these calls drastically optimizes the overall performance of the function by accumulating data in RAM and flushing the block only when the buffer is full or when the function terminates.
+
+### 🎯 Formatting Algorithm: Hierarchical Pre-computation
+
+To correctly resolve the complex combination of bonus flags, a predictive three-step algorithm is used:
+
+1. **Capture:** The parser extracts numerical values for field width and precision, and toggles active flags.
+2. **Computation:** The total size of the final text "bounding box" is mathematically determined (calculating padding spaces, precision zeros, prefixes like `0x`, or `+`/`-` signs alongside the raw numerical value).
+3. **Flushing:** The formatted components are pushed to the buffer in a strict, sequential hierarchical order, ensuring the output matches the standard `libc` behavior.
+
+---
+
+## 🧠 Defense Guide and Edge Cases
+
+To pass the most rigorous automated test suites in the 42 community, the codebase implements robust native solutions for critical scenarios:
+
+- **Null Pointer Management (`%s` and `%p` with NULL):** If a `NULL` pointer is passed to a string specifier, it safely prints `(null)` (or system-specific variations). For `%p` pointers, it manages the correct output layout as `(nil)` or `0x0`.
+- **Integer Overflows:** Handling boundary values such as `LONG_MIN` or `INT_MIN` is performed by casting up to higher-capacity data types (`long long` or `unsigned long long`) during intermediate arithmetic transformations to avoid undefined behavior.
+- **Conflicting Flags and Precedence:** The codebase implements an implicit precedence logic hierarchy. For example, the `-` flag (left alignment) completely overrides the `0` flag (zero padding), and the `+` flag (always show sign) takes priority over the ` ` (blank space) flag.
+
+---
+
+## 🛠️ Usage and Compilation
+
+### Requirements
+- `cc`, `clang`, or `gcc`
+- `make` automation utility
+- Unix-based environment (Linux, macOS)
+
+### Library Compilation
+
+To generate the static library file (`libftprintf.a`), execute the base command in the project root:
 ```bash
 make
 ```
+The Makefile includes the mandatory rules required by the subject: `all`, `clean`, `fclean`, and `re`.
 
-### Ejecución
-Para utilizar `ft_printf` en tu código, incluye el encabezado y vincula el archivo `.a` generado:
+### Linking and Integration
+
+To use `ft_printf` inside your own C source code, include its header file and link the compiled static `.a` archive during your final binary compilation:
+
 ```c
 #include "ft_printf.h"
 
 int main(void)
 {
-    ft_printf("Hola %s, el número es %+10.5d\n", "Mundo", 42);
+    ft_printf("Hello %s, the number is %+10.5d\n", "World", 42);
     return (0);
 }
 ```
+
 ```bash
-gcc main.c libftprintf.a -o mi_programa
-./mi_programa
+gcc main.c libftprintf.a -o my_program
+./my_program
 ```
 
-## 📚 Recursos
-- **Documentación**: Referencia de la función `printf(3)` del manual de Linux.
-- **Tutoriales**: Guías sobre el manejo de la estructura `va_list` y macros asociadas.
-- **Uso de IA**: Se ha utilizado inteligencia artificial generativa para:
-    - Diseñar la arquitectura de la estructura unificada `t_printf`.
-    - Optimizar la lógica del buffer para evitar llamadas excesivas a `write`.
-    - Generar la documentación técnica y la estructura visual del README.
-
-## 🏗️ Decisiones Técnicas: Algoritmo y Estructura de Datos
-
-### 💾 Estructura de Datos: `t_printf`
-Se ha diseñado una estructura de datos unificada que actúa como el "estado global" de la función. Contiene el buffer de caracteres, el índice actual, el contador total y todas las variables de flags.
-- **Justificación**: Permite acceso total a la información mediante un único puntero, eliminando variables globales y facilitando la modularidad entre archivos.
-
-### ⚡ Algoritmo de Salida: Gestión de Buffer
-En lugar de imprimir cada carácter individualmente, se utiliza un buffer de **4096 bytes**.
-- **Justificación**: Minimizar las llamadas al sistema (`write`) optimiza drásticamente el rendimiento, acumulando datos en RAM antes de enviarlos a la salida estándar.
-
-### 🎯 Algoritmo de Formateo: Pre-cálculo
-Para los flags de bonus, se utiliza un algoritmo de tres pasos:
-1. **Captura**: El parser extrae los valores.
-2. **Cálculo**: Se determina el tamaño total de la "caja" (espacios + ceros + prefijos + valor).
-3. **Volcado**: Se envían los componentes al buffer en un orden jerárquico estricto.
-
 ---
+
+## 📚 Resources and References
+
+### References
+- Linux Programmer's Manual: `printf(3)` reference page.
+- ISO/IEC 9899 Standard: Official documentation on variadic types and associated macros (`va_list`, `va_start`, `va_arg`, `va_end`).
+- System call optimization guidelines for POSIX-compliant systems.
+
+### AI Usage Statement
+Generative artificial intelligence assistance was strictly used as an architectural optimization and support tool during the project workflow for:
+- **Architectural Design:** Conceptualizing the unified `t_printf` control structure for safe cross-file modularity.
+- **Memory Optimization:** Refactoring the internal output buffer flushing logic to guarantee the absolute minimum amount of `write()` execution paths.
+- **Documentation:** Structural formatting and visual layout generations of this README.md file schema.
+
+All generated suggestions were manually reviewed, adapted, tested, and validated with:
+- `norminette` checks;
+- Automated test suites (ensuring total absence of memory leaks).
+
+The final responsibility for the code, the tests, and the project defense remains with the author.

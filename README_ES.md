@@ -117,3 +117,13 @@ La asistencia de inteligencia artificial generativa se utilizó estrictamente co
 - **Documentación:** Generación y formatting estructural de los esquemas visuales de este archivo README.md.
 
 Toda la implementación fue auditada, adaptada, compilada y aprobada manualmente mediante la suite de herramientas oficiales, garantizando el cumplimiento total de la Norminette de 42 y la ausencia absoluta de fugas de memoria.
+
+---
+
+## ⚖️ Descargo de Responsabilidad (Disclaimer)
+
+Este repositorio ha sido creado con fines puramente académicos y como parte de mi proceso de aprendizaje en el plan de estudios de **42**.
+
+* **Uso bajo tu propio riesgo:** No me hago responsable del uso que se le dé al código de este repositorio, ni de las consecuencias derivadas de su copia, modificación o reutilización en tus propias entregas.
+* **Política de copia de 42 (Plagio):** Se recuerda a los estudiantes de 42 que el plagio o la copia directa de código sin comprender su funcionamiento infringe las normas de la escuela y puede ser penalizado de forma severa por los sistemas de evaluación automática o manual (*Moulinette* / Evaluadores).
+* **Propósito:** El código se comparte con el único objetivo de servir como referencia, consulta técnica o inspiración para resolver arquitecturas de Makefiles complejos y automatización de tests interactivos.
